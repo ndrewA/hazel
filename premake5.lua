@@ -44,7 +44,7 @@ project "Hazel"
 	links
 	{
 		"GLFW",
-		"opengl23.lib"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
