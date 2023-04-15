@@ -2,7 +2,7 @@
 .vs/
 bin/
 bin-int/
-Hazel/vendor/GLFW/
+Hazel/Hazel/vendor/GLFW/
 
 # Files
 *.user
