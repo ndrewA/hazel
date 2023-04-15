@@ -105,13 +105,13 @@ project "Sandbox"
 		staticruntime "On"
 		systemversion "latest"
 
-		defines
-		{
-			"HZ_PLATFORM_WINDOWS"
-		}
+	defines
+	{
+		"HZ_PLATFORM_WINDOWS"
+	}
 
 	filter "configurations:Debug"
-		defines "HZ_DEBUG"
+		defines { "HZ_DEBUG", "HZ_ENABLE_ASSERTS" } 
 		symbols "On"
 
 	filter "configurations:Release"

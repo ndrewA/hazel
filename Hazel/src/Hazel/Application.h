@@ -1,7 +1,10 @@
 #pragma once
 
+#include "hzpch.h"
+
 #include "Core.h"
 #include "Events/Event.h"
+#include "Window.h"
 
 namespace hazel
 {
@@ -13,6 +16,8 @@ namespace hazel
 
 		void run();
 	private:
+		std::unique_ptr<Window> window;
+		bool running = true;
 	};
 
 	// TO BE DEFINED IN CLIENT
