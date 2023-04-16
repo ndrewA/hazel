@@ -14,8 +14,8 @@ namespace hazel
 
 		WindowProps(const std::string& title = "Hazel Engine",
 					unsigned int width = 1280,
-					unsigned int height = 720) :
-			title(title), width(width), height(height) { }
+					unsigned int height = 720)
+			: title(title), width(width), height(height) { }
 	};
 
 	// Interface representing a desktop system based Window
