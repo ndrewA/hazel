@@ -27,6 +27,7 @@ namespace hazel
 	WindowsWindow::~WindowsWindow() 
 	{ 
 		shutDown();
+		glfwTerminate();
 	}
 
 	void WindowsWindow::init(const WindowProps& props)
@@ -121,7 +122,7 @@ namespace hazel
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
 
-			MouseScrolledEvent event(xoffset, yoffset);
+			MouseScrolledEvent event((float)xoffset, (float)yoffset);
 			data.eventCallBack(event);
 		});
 
@@ -129,7 +130,7 @@ namespace hazel
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
 
-			MouseMovedEvent event(xpos, ypos);
+			MouseMovedEvent event((float)xpos, (float)ypos);
 			data.eventCallBack(event);
 		});
 	}

@@ -4,10 +4,10 @@
 
 #include "Core.h"
 
-#include "Events/Event.h"
-#include "Hazel/Events/ApplicationEvent.h"
-
 #include "Window.h"
+#include "LayerStack.h"
+#include "Events/Event.h"
+#include "Events/ApplicationEvent.h"
 
 namespace hazel
 {
@@ -20,11 +20,15 @@ namespace hazel
 		void run();
 
 		void onEvent(Event& e);
+
+		void pushLayer(Layer* layer);
+		void pushOverlay(Layer* layer);
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> window;
 		bool running = true;
+		LayerStack layerStack;
 	};
 
 	// TO BE DEFINED IN CLIENT
