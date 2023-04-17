@@ -5,16 +5,17 @@
 
 namespace hazel
 {
-
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+	Application* Application::instance = nullptr;
 
 	Application::Application() 
 	{
+		HZ_CORE_ASSERT(!instance, "Application already exists!");
+		instance = this;
+
 		window = std::unique_ptr<Window>(Window::Create());
 		window->setEventCallback(BIND_EVENT_FN(onEvent));
-
-		unsigned int id;
-		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application() 
@@ -24,11 +25,13 @@ namespace hazel
 	void Application::pushLayer(Layer* layer)
 	{
 		layerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* layer)
 	{
 		layerStack.pushOverlay(layer);
+		layer->onAttach();
 	}
 
 	void Application::onEvent(Event& e)
