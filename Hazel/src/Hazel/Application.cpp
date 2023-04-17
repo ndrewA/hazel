@@ -1,8 +1,7 @@
 #include "hzpch.h"
 #include "Application.h"
 
-// #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace hazel
 {
@@ -13,6 +12,9 @@ namespace hazel
 	{
 		window = std::unique_ptr<Window>(Window::Create());
 		window->setEventCallback(BIND_EVENT_FN(onEvent));
+
+		unsigned int id;
+		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application() 
