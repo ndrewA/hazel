@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hzpch.h"
-
 #include "Hazel/Core.h"
 #include "Hazel/Events/Event.h"
 
@@ -35,6 +33,8 @@ namespace hazel
 		virtual void setEventCallback(const eventCallBackFn& callback) = 0;
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
+
+		virtual void* getNativeWindow() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
 	};

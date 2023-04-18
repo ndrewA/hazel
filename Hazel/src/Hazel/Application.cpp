@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+#include "Input.h"
+
 namespace hazel
 {
 	Application* Application::instance = nullptr;
@@ -53,6 +55,9 @@ namespace hazel
 
 			for (auto& layer : layerStack)
 				layer->onUpdate();
+
+			auto [x, y] = Input::getMousePos();
+			HZ_TRACE("{0}, {2}, {1}", x, y, x);
 
 			window->onUpdate();
 		}
