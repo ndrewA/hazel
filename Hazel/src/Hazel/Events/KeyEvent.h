@@ -63,6 +63,13 @@ namespace hazel
 		CharEvent(unsigned int codepoint)
 			: codepoint(codepoint) { }
 
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "CharEvent: " << (char)codepoint;
+			return ss.str();
+		}
+
 		EVENT_CLASS_CATEGORY(eventCategoryKeyboard | eventCategoryInput)
 		EVENT_CLASS_TYPE(charPressed)
 

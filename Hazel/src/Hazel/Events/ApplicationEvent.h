@@ -31,6 +31,13 @@ namespace hazel
 	public:
 		WindowCloseEvent() { }
 
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowCloseEvent";
+			return ss.str();
+		}
+
 		EVENT_CLASS_TYPE(windowClose)
 		EVENT_CLASS_CATEGORY(eventCategoryApplication)
 	};

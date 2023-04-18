@@ -21,6 +21,7 @@ namespace hazel
 	private:
 		bool handleFocus(WindowFocusEvent& e);
 		bool handleLostFocus(WindowLostFocusEvent& e);
+		bool handleWindowResize(WindowResizeEvent& e);
 		bool handleKeyPressed(KeyPressedEvent& e);
 		bool handleKeyReleased(KeyReleasedEvent& e);
 		bool handleCharInput(CharEvent& e);

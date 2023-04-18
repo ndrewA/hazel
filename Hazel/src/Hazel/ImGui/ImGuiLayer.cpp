@@ -3,7 +3,10 @@
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-#include "GLFW/glfw3.h"
+// ====== TEMPORARY ========
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+// =========================
 
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 #include "Platform/GLFW/ImGuiGLFWRenderer.h"
@@ -16,12 +19,9 @@
 
 namespace hazel
 {
-#define BIND_EVENT_FN(x) std::bind(&ImGuiLayer::x, this, std::placeholders::_1)
-
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
-
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -58,7 +58,7 @@ namespace hazel
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::get();
 		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
-
+		
 		float currentTime = (float)glfwGetTime();
 		io.DeltaTime = time > 0.0 ? (currentTime - time) : (1.0f / 60.0f);
 		time = currentTime;
@@ -75,74 +75,84 @@ namespace hazel
 	void ImGuiLayer::onEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.dispatch<WindowFocusEvent>(BIND_EVENT_FN(handleFocus));
-		dispatcher.dispatch<WindowLostFocusEvent>(BIND_EVENT_FN(handleLostFocus));
-		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(handleKeyPressed));
-		dispatcher.dispatch<KeyReleasedEvent>(BIND_EVENT_FN(handleKeyReleased));
-		dispatcher.dispatch<CharEvent>(BIND_EVENT_FN(handleCharInput));
-		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(handleMouseButtonPressed));
-		dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(handleMouseButtonReleased));
-		dispatcher.dispatch<MouseMovedEvent>(BIND_EVENT_FN(handleMouseMoved));
-		dispatcher.dispatch<MouseScrolledEvent>(BIND_EVENT_FN(handleMouseScrolled));
+		dispatcher.dispatch<WindowFocusEvent>(BIND_EVENT_FN(ImGuiLayer::handleFocus));
+		dispatcher.dispatch<WindowLostFocusEvent>(BIND_EVENT_FN(ImGuiLayer::handleLostFocus));
+		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImGuiLayer::handleKeyPressed));
+		dispatcher.dispatch<KeyReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::handleKeyReleased));
+		dispatcher.dispatch<CharEvent>(BIND_EVENT_FN(ImGuiLayer::handleCharInput));
+		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseButtonPressed));
+		dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseButtonReleased));
+		dispatcher.dispatch<MouseMovedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseMoved));
+		dispatcher.dispatch<MouseScrolledEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseScrolled));
 	}
 
 	bool ImGuiLayer::handleFocus(WindowFocusEvent& e)
 	{
 		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 1);
-		return true;
+		return false;
 	}
 
 	bool ImGuiLayer::handleLostFocus(WindowLostFocusEvent& e)
 	{
 		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 0);
-		return true;
+		return false;
+	}
+
+	bool ImGuiLayer::handleWindowResize(WindowResizeEvent& e)
+	{
+		Application& app = Application::get();
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
+		glViewport(0, 0, e.getWidth(), e.getHeight());
+
+		return false;
 	}
 	
 	bool ImGuiLayer::handleKeyPressed(KeyPressedEvent& e)
 	{
 		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
 								   e.getKeyCode(), e.getScanCode(), GLFW_PRESS, e.getMods());
-		return true;
+		return ImGui::GetIO().WantCaptureKeyboard;
 	}
 
 	bool ImGuiLayer::handleKeyReleased(KeyReleasedEvent& e)
 	{
 		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
 								   e.getKeyCode(), e.getScanCode(), GLFW_RELEASE, e.getMods());
-		return true;
+		return ImGui::GetIO().WantCaptureKeyboard;
 	}
 
 	bool ImGuiLayer::handleCharInput(CharEvent& e)
 	{
-		ImGui::GetIO().AddInputCharacter(e.getCodePoint());
-		return true;
+		ImGui_ImplGlfw_CharCallback(glfwGetCurrentContext(), e.getCodePoint());
+		return ImGui::GetIO().WantCaptureKeyboard;
 	}
 
 	bool ImGuiLayer::handleMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), 
 										   e.getButton(), GLFW_PRESS, e.getMods());
-		return true;
+		return ImGui::GetIO().WantCaptureMouse;
 	}
 
 	bool ImGuiLayer::handleMouseButtonReleased(MouseButtonReleasedEvent& e)
 	{
 		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), 
 										   e.getButton(), GLFW_RELEASE, e.getMods());
-		return true;
+		return ImGui::GetIO().WantCaptureMouse;
 	}
 
 	bool ImGuiLayer::handleMouseMoved(MouseMovedEvent& e)
 	{
 		ImGui_ImplGlfw_CursorPosCallback(glfwGetCurrentContext(), 
 										 e.getX(), e.getY());
-		return true;
+		return ImGui::GetIO().WantCaptureMouse;
 	}
 
 	bool ImGuiLayer::handleMouseScrolled(MouseScrolledEvent& e)
 	{
 		ImGui_ImplGlfw_ScrollCallback(glfwGetCurrentContext(), 
 									  e.getXOffset(), e.getYOffset());
-		return true;
+		return ImGui::GetIO().WantCaptureMouse;
 	}
 }
