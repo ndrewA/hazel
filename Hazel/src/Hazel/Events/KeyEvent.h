@@ -56,4 +56,19 @@ namespace hazel
 
 		EVENT_CLASS_TYPE(keyReleased)
 	};
+
+	class HZ_API CharEvent : public Event
+	{
+	public:
+		CharEvent(unsigned int codepoint)
+			: codepoint(codepoint) { }
+
+		EVENT_CLASS_CATEGORY(eventCategoryKeyboard | eventCategoryInput)
+		EVENT_CLASS_TYPE(charPressed)
+
+		inline unsigned int getCodePoint() const { return codepoint; }
+
+	private:
+		unsigned int codepoint;
+	};
 }

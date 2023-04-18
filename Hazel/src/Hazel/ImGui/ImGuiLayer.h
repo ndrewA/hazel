@@ -23,6 +23,7 @@ namespace hazel
 		bool handleLostFocus(WindowLostFocusEvent& e);
 		bool handleKeyPressed(KeyPressedEvent& e);
 		bool handleKeyReleased(KeyReleasedEvent& e);
+		bool handleCharInput(CharEvent& e);
 		bool handleMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool handleMouseButtonReleased(MouseButtonReleasedEvent& e);
 		bool handleMouseMoved(MouseMovedEvent& e);

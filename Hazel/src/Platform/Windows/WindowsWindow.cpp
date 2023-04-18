@@ -57,9 +57,9 @@ namespace hazel
 		setVSync(true);
 
 		// set glfw callbacks
-		glfwSetWindowSizeCallback(window, [](GLFWwindow* currentWindow, int width, int height) 
+		glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) 
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			data.width = width;
 			data.height = height;
 
@@ -67,16 +67,16 @@ namespace hazel
 			data.eventCallBack(event);
 		});
 
-		glfwSetWindowCloseCallback(window, [](GLFWwindow* currentWindow)
+		glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			WindowCloseEvent event;
 			data.eventCallBack(event);
 		});
 
-		glfwSetWindowFocusCallback(window, [](GLFWwindow* currentWindow, int focused)
+		glfwSetWindowFocusCallback(window, [](GLFWwindow* window, int focused)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			if (focused) {
 				WindowFocusEvent event;
 				data.eventCallBack(event);
@@ -87,9 +87,9 @@ namespace hazel
 			}
 		});
 
-		glfwSetCursorEnterCallback(window, [](GLFWwindow* currentWindow, int entered)
+		glfwSetCursorEnterCallback(window, [](GLFWwindow* window, int entered)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			if (entered) {
 				CursorEnteredWindowEvent event;
@@ -101,9 +101,9 @@ namespace hazel
 			}
 		});
 
-		glfwSetKeyCallback(window, [](GLFWwindow* currentWindow, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch (action)
 			{
@@ -128,9 +128,9 @@ namespace hazel
 			}
 		});
 
-		glfwSetMouseButtonCallback(window, [](GLFWwindow* currentWindow, int button, int action, int mods)
+		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch (action)
 			{
@@ -149,19 +149,27 @@ namespace hazel
 			}
 		});
 
-		glfwSetScrollCallback(window, [](GLFWwindow* currentWindow, double xoffset, double yoffset)
+		glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			MouseScrolledEvent event((float)xoffset, (float)yoffset);
 			data.eventCallBack(event);
 		});
 
-		glfwSetCursorPosCallback(window, [](GLFWwindow* currentWindow, double xpos, double ypos)
+		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			MouseMovedEvent event(xpos, ypos);
+			data.eventCallBack(event);
+		});
+
+		glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int codepoint)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			CharEvent event(codepoint);
 			data.eventCallBack(event);
 		});
 	}

@@ -10,7 +10,7 @@ namespace hazel
 		windowClose, windowResize, windowFocus, windowLostFocus, windowMoved, 
 		cursorEntered, cursorLeft,
 		appTick, appUpdate, appRender,
-		keyPressed, keyReleased,
+		keyPressed, keyReleased, charPressed,
 		mouseButtonPressed, mouseButtonReleased, mouseMoved, mouseScrolled
 	};
 
