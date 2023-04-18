@@ -35,6 +35,70 @@ namespace hazel
 		EVENT_CLASS_CATEGORY(eventCategoryApplication)
 	};
 
+	class HZ_API WindowFocusEvent : public Event
+	{
+	public:
+		WindowFocusEvent() { }
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowFocusEvent";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(windowFocus)
+		EVENT_CLASS_CATEGORY(eventCategoryApplication)
+	};
+
+	class HZ_API WindowLostFocusEvent : public Event
+	{
+	public:
+		WindowLostFocusEvent() { }
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowLostFocusEvent";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(windowLostFocus)
+		EVENT_CLASS_CATEGORY(eventCategoryApplication)
+	};
+
+	class HZ_API CursorEnteredWindowEvent : public Event
+	{
+	public:
+		CursorEnteredWindowEvent() { }
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "CursorEnteredWindowEvent";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(cursorEntered)
+		EVENT_CLASS_CATEGORY(eventCategoryApplication)
+	};
+
+	class HZ_API CursorLeftWindowEvent : public Event
+	{
+	public:
+		CursorLeftWindowEvent() { }
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "CursorLeftWindowEvent";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(cursorLeft)
+		EVENT_CLASS_CATEGORY(eventCategoryApplication)
+	};
+
 	class HZ_API AppTickEvent : public Event
 	{
 	public:

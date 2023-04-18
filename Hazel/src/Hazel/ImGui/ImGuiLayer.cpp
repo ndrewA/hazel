@@ -1,20 +1,30 @@
+
 #include "hzpch.h"
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-#include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 #include "GLFW/glfw3.h"
+
+#include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
+#include "Platform/GLFW/ImGuiGLFWRenderer.h"
 #include "Hazel/Application.h"
+#include "Hazel/Events/ApplicationEvent.h"
+#include "Hazel/Events/KeyEvent.h"
+#include "Hazel/Events/MouseEvent.h"
 
 namespace hazel
 {
+#define BIND_EVENT_FN(x) std::bind(&ImGuiLayer::x, this, std::placeholders::_1)
+
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
+
 	}
 
 	ImGuiLayer::~ImGuiLayer()
 	{
+		onDetach();
 	}
 
 	void ImGuiLayer::onAttach()
@@ -26,43 +36,23 @@ namespace hazel
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;  
-		
-		// TEMPORARY: should eventually use Hazel key codes
 
-		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-		io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-		io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-		io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-		io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-		io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-		io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-		io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-		io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-		io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-		io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-		io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-		io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
-
+		ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), false);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::onDetach()
 	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::onUpdate()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::get();
-		io.DisplaySize = ImVec2(app.getWindow().getWidth(), app.getWindow().getHeight());
+		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
 
 		float currentTime = (float)glfwGetTime();
 		io.DeltaTime = time > 0.0 ? (currentTime - time) : (1.0f / 60.0f);
@@ -79,5 +69,64 @@ namespace hazel
 
 	void ImGuiLayer::onEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.dispatch<WindowFocusEvent>(BIND_EVENT_FN(handleFocus));
+		dispatcher.dispatch<WindowLostFocusEvent>(BIND_EVENT_FN(handleLostFocus));
+		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(handleKeyPressed));
+		dispatcher.dispatch<KeyReleasedEvent>(BIND_EVENT_FN(handleKeyReleased));
+		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(handleMouseButtonPressed));
+		dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(handleMouseButtonReleased));
+		dispatcher.dispatch<MouseMovedEvent>(BIND_EVENT_FN(handleMouseMoved));
+		dispatcher.dispatch<MouseScrolledEvent>(BIND_EVENT_FN(handleMouseScrolled));
+	}
+
+	bool ImGuiLayer::handleFocus(WindowFocusEvent& e)
+	{
+		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 1);
+		return false;
+	}
+
+	bool ImGuiLayer::handleLostFocus(WindowLostFocusEvent& e)
+	{
+		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 0);
+		return false;
+	}
+	
+	bool ImGuiLayer::handleKeyPressed(KeyPressedEvent& e)
+	{
+		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
+								   e.getKeyCode(), e.getScanCode(), GLFW_PRESS, e.getMods());
+		return false;
+	}
+
+	bool ImGuiLayer::handleKeyReleased(KeyReleasedEvent& e)
+	{
+		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
+								   e.getKeyCode(), e.getScanCode(), GLFW_RELEASE, e.getMods());
+		return false;
+	}
+
+	bool ImGuiLayer::handleMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), e.getButton(), GLFW_PRESS, e.getMods());
+		return false;
+	}
+
+	bool ImGuiLayer::handleMouseButtonReleased(MouseButtonReleasedEvent& e)
+	{
+		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), e.getButton(), GLFW_RELEASE, e.getMods());
+		return false;
+	}
+
+	bool ImGuiLayer::handleMouseMoved(MouseMovedEvent& e)
+	{
+		ImGui_ImplGlfw_CursorPosCallback(glfwGetCurrentContext(), e.getX(), e.getY());
+		return false;
+	}
+
+	bool ImGuiLayer::handleMouseScrolled(MouseScrolledEvent& e)
+	{
+		ImGui_ImplGlfw_ScrollCallback(glfwGetCurrentContext(), e.getXOffset(), e.getYOffset());
+		return false;
 	}
 }

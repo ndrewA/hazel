@@ -7,21 +7,25 @@ namespace hazel
 	class HZ_API KeyEvent : public Event
 	{
 	public:
-		inline int getKeyCode() { return keyCode; }
+		inline int getKeyCode() const { return keyCode; }
+		inline int getScanCode() const { return scancode; }
+		inline int getMods() const { return mods; }
 		
 		EVENT_CLASS_CATEGORY(eventCategoryKeyboard | eventCategoryInput)
 	protected:
-		KeyEvent(int keyCode)
-			: keyCode(keyCode) { }
+		KeyEvent(int keyCode, int scancode, int mods)
+			: keyCode(keyCode), scancode(scancode), mods(mods) { }
 
 		int keyCode;
+		int scancode;
+		int mods;
 	};
 
 	class HZ_API KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keyCode, int repeatCount)
-			: KeyEvent(keyCode), repeatCount(repeatCount) { }
+		KeyPressedEvent(int keyCode, int scancode, int mods, int repeatCount)
+			: KeyEvent(keyCode, scancode, mods), repeatCount(repeatCount) { }
 
 		inline int getRepeatCount() const { return repeatCount; }
 
@@ -40,8 +44,8 @@ namespace hazel
 	class HZ_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keyCode)
-			: KeyEvent(keyCode){ }
+		KeyReleasedEvent(int keyCode, int scancode, int mods)
+			: KeyEvent(keyCode, scancode, mods) { }
 
 		std::string toString() const override
 		{

@@ -74,6 +74,33 @@ namespace hazel
 			data.eventCallBack(event);
 		});
 
+		glfwSetWindowFocusCallback(window, [](GLFWwindow* currentWindow, int focused)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+			if (focused) {
+				WindowFocusEvent event;
+				data.eventCallBack(event);
+			}
+			else {
+				WindowLostFocusEvent event;
+				data.eventCallBack(event);
+			}
+		});
+
+		glfwSetCursorEnterCallback(window, [](GLFWwindow* currentWindow, int entered)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
+
+			if (entered) {
+				CursorEnteredWindowEvent event;
+				data.eventCallBack(event);
+			}
+			else {
+				CursorLeftWindowEvent event;
+				data.eventCallBack(event);
+			}
+		});
+
 		glfwSetKeyCallback(window, [](GLFWwindow* currentWindow, int key, int scancode, int action, int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
@@ -82,19 +109,19 @@ namespace hazel
 			{
 				case GLFW_PRESS:
 				{
-					KeyPressedEvent event(key, 0);
+					KeyPressedEvent event(key, scancode, mods, 0);
 					data.eventCallBack(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					KeyReleasedEvent event(key);
+					KeyReleasedEvent event(key, scancode, mods);
 					data.eventCallBack(event);
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					KeyPressedEvent event(key, 1);
+					KeyPressedEvent event(key, scancode, mods, 1);
 					data.eventCallBack(event);
 					break;
 				}
@@ -109,13 +136,13 @@ namespace hazel
 			{
 				case GLFW_PRESS:
 				{
-					MouseButtonPressedEvent event(button);
+					MouseButtonPressedEvent event(button, mods);
 					data.eventCallBack(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					MouseButtonReleasedEvent event(button);
+					MouseButtonReleasedEvent event(button, mods);
 					data.eventCallBack(event);
 					break;
 				}
@@ -134,11 +161,10 @@ namespace hazel
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(currentWindow);
 
-			MouseMovedEvent event((float)xpos, (float)ypos);
+			MouseMovedEvent event(xpos, ypos);
 			data.eventCallBack(event);
 		});
 	}
-
 
 	void WindowsWindow::shutDown()
 	{

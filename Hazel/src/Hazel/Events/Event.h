@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hzpch.h"
-
 #include "Hazel/Core.h"
 
 namespace hazel
@@ -9,7 +7,8 @@ namespace hazel
 	enum class eventType
 	{
 		none = 0,
-		windowClose, windowResize, windowFocus, windowLostFocus, windowMoved,
+		windowClose, windowResize, windowFocus, windowLostFocus, windowMoved, 
+		cursorEntered, cursorLeft,
 		appTick, appUpdate, appRender,
 		keyPressed, keyReleased,
 		mouseButtonPressed, mouseButtonReleased, mouseMoved, mouseScrolled

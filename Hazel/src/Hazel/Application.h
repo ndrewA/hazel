@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hzpch.h"
-
 #include "Core.h"
 
 #include "Window.h"
