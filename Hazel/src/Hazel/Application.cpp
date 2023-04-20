@@ -5,6 +5,8 @@
 
 #include "Input.h"
 
+#include "glm/glm.hpp"
+
 namespace hazel
 {
 	Application* Application::instance = nullptr;
