@@ -8,7 +8,7 @@
 #include "LayerStack.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
-
+ 
 namespace hazel
 {
 	class HZ_API Application
