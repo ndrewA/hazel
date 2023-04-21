@@ -26,7 +26,7 @@ group ""
 
 project "Hazel"
 	location "Hazel"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -111,6 +111,7 @@ project "Sandbox"
 	{
 		"Hazel/vendor/spdlog/include;",
 		"Hazel/src",
+		"Hazel/vendor",
 		"%{IncludeDir.glm}"
 	}
 

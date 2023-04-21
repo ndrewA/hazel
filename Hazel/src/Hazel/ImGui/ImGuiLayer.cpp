@@ -3,13 +3,10 @@
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-// ====== TEMPORARY ========
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-// =========================
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
-#include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
-#include "Platform/GLFW/ImGuiGLFWRenderer.h"
+#include <GLFW/glfw3.h>
 
 #include "Hazel/Core.h"
 #include "Hazel/Application.h"
@@ -33,16 +30,29 @@ namespace hazel
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+		io.IniFilename = nullptr;
+		//io.ConfigViewportsNoAutoMerge = true;
+		//io.ConfigViewportsNoTaskBarIcon = true;
+
 		ImGui::StyleColorsDark();
 
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
 
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+		Application& app = Application::get();
+		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
 
-		ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), false);
+		// Setup Platform/Renderer backends
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
@@ -53,106 +63,42 @@ namespace hazel
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::onUpdate()
+	void ImGuiLayer::onImGuiRender()
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::get();
-		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
-		
-		float currentTime = (float)glfwGetTime();
-		io.DeltaTime = time > 0.0 ? (currentTime - time) : (1.0f / 60.0f);
-		time = currentTime;
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui::NewFrame();
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
 
+		{
+			ImGui::Begin("Another Window", &show);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Text("Hello from another window!");
+			if (ImGui::Button("Close Me"))
+				show = false;
+			ImGui::End();
+		}
+	}
+
+	void ImGuiLayer::begin()
+	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+	}
+
+	void ImGuiLayer::end()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		Application& app = Application::get();
+		io.DisplaySize = ImVec2(app.getWindow().getWidth(), app.getWindow().getHeight());
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
 
-	void ImGuiLayer::onEvent(Event& event)
-	{
-		EventDispatcher dispatcher(event);
-		dispatcher.dispatch<WindowFocusEvent>(BIND_EVENT_FN(ImGuiLayer::handleFocus));
-		dispatcher.dispatch<WindowLostFocusEvent>(BIND_EVENT_FN(ImGuiLayer::handleLostFocus));
-		dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImGuiLayer::handleKeyPressed));
-		dispatcher.dispatch<KeyReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::handleKeyReleased));
-		dispatcher.dispatch<CharEvent>(BIND_EVENT_FN(ImGuiLayer::handleCharInput));
-		dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseButtonPressed));
-		dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseButtonReleased));
-		dispatcher.dispatch<MouseMovedEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseMoved));
-		dispatcher.dispatch<MouseScrolledEvent>(BIND_EVENT_FN(ImGuiLayer::handleMouseScrolled));
-	}
-
-	bool ImGuiLayer::handleFocus(WindowFocusEvent& e)
-	{
-		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 1);
-		return false;
-	}
-
-	bool ImGuiLayer::handleLostFocus(WindowLostFocusEvent& e)
-	{
-		ImGui_ImplGlfw_WindowFocusCallback(glfwGetCurrentContext(), 0);
-		return false;
-	}
-
-	bool ImGuiLayer::handleWindowResize(WindowResizeEvent& e)
-	{
-		Application& app = Application::get();
-		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
-		glViewport(0, 0, e.getWidth(), e.getHeight());
-
-		return false;
-	}
-	
-	bool ImGuiLayer::handleKeyPressed(KeyPressedEvent& e)
-	{
-		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
-								   e.getKeyCode(), e.getScanCode(), GLFW_PRESS, e.getMods());
-		return ImGui::GetIO().WantCaptureKeyboard;
-	}
-
-	bool ImGuiLayer::handleKeyReleased(KeyReleasedEvent& e)
-	{
-		ImGui_ImplGlfw_KeyCallback(glfwGetCurrentContext(), 
-								   e.getKeyCode(), e.getScanCode(), GLFW_RELEASE, e.getMods());
-		return ImGui::GetIO().WantCaptureKeyboard;
-	}
-
-	bool ImGuiLayer::handleCharInput(CharEvent& e)
-	{
-		ImGui_ImplGlfw_CharCallback(glfwGetCurrentContext(), e.getCodePoint());
-		return ImGui::GetIO().WantCaptureKeyboard;
-	}
-
-	bool ImGuiLayer::handleMouseButtonPressed(MouseButtonPressedEvent& e)
-	{
-		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), 
-										   e.getButton(), GLFW_PRESS, e.getMods());
-		return ImGui::GetIO().WantCaptureMouse;
-	}
-
-	bool ImGuiLayer::handleMouseButtonReleased(MouseButtonReleasedEvent& e)
-	{
-		ImGui_ImplGlfw_MouseButtonCallback(glfwGetCurrentContext(), 
-										   e.getButton(), GLFW_RELEASE, e.getMods());
-		return ImGui::GetIO().WantCaptureMouse;
-	}
-
-	bool ImGuiLayer::handleMouseMoved(MouseMovedEvent& e)
-	{
-		ImGui_ImplGlfw_CursorPosCallback(glfwGetCurrentContext(), 
-										 e.getX(), e.getY());
-		return ImGui::GetIO().WantCaptureMouse;
-	}
-
-	bool ImGuiLayer::handleMouseScrolled(MouseScrolledEvent& e)
-	{
-		ImGui_ImplGlfw_ScrollCallback(glfwGetCurrentContext(), 
-									  e.getXOffset(), e.getYOffset());
-		return ImGui::GetIO().WantCaptureMouse;
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 	}
 }

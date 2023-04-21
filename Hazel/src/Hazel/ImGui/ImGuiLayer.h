@@ -15,21 +15,11 @@ namespace hazel
 
 		void onAttach() override;
 		void onDetach() override;
-		void onUpdate() override;
-		void onEvent(Event& event) override;
+		void onImGuiRender() override;
 
-	private:
-		bool handleFocus(WindowFocusEvent& e);
-		bool handleLostFocus(WindowLostFocusEvent& e);
-		bool handleWindowResize(WindowResizeEvent& e);
-		bool handleKeyPressed(KeyPressedEvent& e);
-		bool handleKeyReleased(KeyReleasedEvent& e);
-		bool handleCharInput(CharEvent& e);
-		bool handleMouseButtonPressed(MouseButtonPressedEvent& e);
-		bool handleMouseButtonReleased(MouseButtonReleasedEvent& e);
-		bool handleMouseMoved(MouseMovedEvent& e);
-		bool handleMouseScrolled(MouseScrolledEvent& e);
-		
+		void begin();
+		void end();
+
 	private:
 		float time = 0;
 	};

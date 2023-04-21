@@ -1,5 +1,7 @@
 #include <Hazel.h>
 
+#include "imgui/imgui.h"
+
 class ExampleLayer : public hazel::Layer
 {
 public:
@@ -8,14 +10,21 @@ public:
 	{
 	}
 
-	void ExampleLayer::onUpdate() override
+	void onUpdate() override
 	{
 		if (hazel::Input::isKeyPressed(HZ_KEY_TAB))
 			HZ_TRACE("TAB IS PRESSED (POLL)");
 		//HZ_INFO("ExampleLayer::onUpdate");
 	}
 
-	void ExampleLayer::onEvent(hazel::Event& event) override
+	void onImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World");
+		ImGui::End();
+	}
+
+	void onEvent(hazel::Event& event) override
 	{
 		if (event.getEventType() == hazel::eventType::keyPressed)
 		{
@@ -33,14 +42,11 @@ public:
 	Sandbox()
 	{
 		pushLayer(new ExampleLayer);
-		pushOverlay(new hazel::ImGuiLayer);
 	}
 
 	~Sandbox()
 	{
 	}
-
-private:
 };
 
 hazel::Application* hazel::createApplication()
