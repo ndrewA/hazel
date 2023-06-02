@@ -66,9 +66,9 @@ namespace hazel
 	void ImGuiLayer::onImGuiRender()
 	{
 		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
-
+		if (show)
 		{
+			ImGui::ShowDemoWindow(&show);
 			ImGui::Begin("Another Window", &show);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 			ImGui::Text("Hello from another window!");
 			if (ImGui::Button("Close Me"))
