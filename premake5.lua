@@ -110,7 +110,7 @@ project "Sandbox"
 
 	includedirs 
 	{
-		"Hazel/vendor/spdlog/include;",
+		"Hazel/vendor/spdlog/include",
 		"Hazel/src",
 		"Hazel/vendor",
 		"%{IncludeDir.glm}"
@@ -123,11 +123,10 @@ project "Sandbox"
 
 	filter "system:windows"
 		systemversion "latest"
-
-	defines
-	{
-		"HZ_PLATFORM_WINDOWS"
-	}
+		defines
+		{
+			"HZ_PLATFORM_WINDOWS"
+		}
 
 	filter "configurations:Debug"
 		defines { "HZ_DEBUG", "HZ_ENABLE_ASSERTS" } 
