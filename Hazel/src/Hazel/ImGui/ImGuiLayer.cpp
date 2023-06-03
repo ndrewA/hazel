@@ -31,13 +31,11 @@ namespace hazel
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; 
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;  
 		io.IniFilename = nullptr;
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		ImGui::StyleColorsDark();
 
@@ -51,7 +49,6 @@ namespace hazel
 		Application& app = Application::get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.getWindow().getNativeWindow());
 
-		// Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
@@ -65,11 +62,11 @@ namespace hazel
 
 	void ImGuiLayer::onImGuiRender()
 	{
-		static bool show = true;
+		static bool show = false;
 		if (show)
 		{
 			ImGui::ShowDemoWindow(&show);
-			ImGui::Begin("Another Window", &show);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Begin("Another Window", &show); 
 			ImGui::Text("Hello from another window!");
 			if (ImGui::Button("Close Me"))
 				show = false;
