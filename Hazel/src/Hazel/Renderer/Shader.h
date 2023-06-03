@@ -1,19 +1,16 @@
 #pragma once
 
-#include <string>
-
 namespace hazel
 {
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexSource, const std::string& fragmentSource);
-		~Shader();
+		virtual ~Shader() { };
 
-		void bind() const;
-		void unbind() const;
-	private:
-		uint32_t rendererID;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
+
+		static Shader* create(const std::string& vertexSource, const std::string& fragmentSource);
 	};
 }
 

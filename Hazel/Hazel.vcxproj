@@ -143,6 +143,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLIndexBuffer.h" />
     <ClInclude Include="src\Hazel\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexBuffer.h" />
@@ -588,6 +589,7 @@
     <ClInclude Include="src\Hazel\Renderer\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="src\Hazel\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexBuffer.cpp" />
@@ -617,6 +619,10 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\Platform\OpenGL\Shader\shader.frag" />
+    <Text Include="src\Platform\OpenGL\Shader\shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

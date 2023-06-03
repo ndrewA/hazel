@@ -1,10 +1,12 @@
 #include "hzpch.h"
 
-#include "Application.h"
-#include "Input.h"
+#include <filesystem>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
+#include "Application.h"
+#include "Input.h"
 
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
 #include "Platform/OpenGL/OpenGLVertexBuffer.h"
@@ -51,34 +53,9 @@ namespace hazel
 		indexBuffer.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(indices[0])));
 		vertexBuffer->bind();
 
-		std::string vertexSource = R"(
-			#version 460
-			
-			layout(location = 0) in vec3 aPosition;
-			layout(location = 1) in vec4 aColor;
-			
-			out vec4 color;
-
-			void main() {
-				color = aColor;
-				gl_Position = vec4(aPosition, 1.0f);
-			}
-		)";
-
-		std::string fragmentSource = R"(
-			#version 330 core
-			
-			in vec4 color;
-
-			out vec4 FragColor;
-
-			void main()
-			{
-				FragColor = color;
-			} 
-		)";
-
-		shader = std::make_unique<Shader>(vertexSource, fragmentSource);
+		std::string shaderPath = std::filesystem::absolute("../Hazel/src/Platform/OpenGL/Shader/").string();
+		shader.reset(Shader::create(shaderPath + "shader.vert",
+								    shaderPath + "shader.frag"));
 	}
 
 	Application::~Application() 
@@ -119,7 +96,7 @@ namespace hazel
 			shader->bind();
 			glBindVertexArray(vertexArray);
 			glDrawElements(GL_TRIANGLES, indexBuffer->getCount(), GL_UNSIGNED_INT, nullptr);
-			
+
 			for (auto& layer : layerStack)
 				layer->onUpdate();
 

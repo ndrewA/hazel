@@ -12,7 +12,7 @@ namespace hazel
 		switch (Renderer::getAPI())
 		{
 		case rendererAPI::none:
-			HZ_CORE_ASSERT(false, "rendererAPI::none not supported");
+			HZ_CORE_ASSERT(false, "rendererAPI::none not supported!");
 			return nullptr;
 		case rendererAPI::opengl:
 			return new OpenGLVertexBuffer(vertices, size);

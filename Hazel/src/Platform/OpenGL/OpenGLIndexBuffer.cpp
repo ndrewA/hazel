@@ -7,7 +7,7 @@
 
 namespace hazel
 {
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vertices, size_t count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* vertices, uint32_t count)
 		: count(count)
 	{
 		glCreateBuffers(1, &rendererID);
