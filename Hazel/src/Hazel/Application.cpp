@@ -8,33 +8,12 @@
 #include "Application.h"
 #include "Input.h"
 
-#include "Platform/OpenGL/OpenGLIndexBuffer.h"
-#include "Platform/OpenGL/OpenGLVertexBuffer.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 #include "Renderer/BufferLayout.h"
 
 namespace hazel
 {
 	Application* Application::instance = nullptr;
-
-	static GLenum shaderDataTypeToOpenGLBaseType(const shaderDataType type)
-	{
-		switch (type)
-		{
-		case shaderDataType::float4:	return GL_FLOAT;
-		case shaderDataType::float3:	return GL_FLOAT;
-		case shaderDataType::float2:	return GL_FLOAT;
-		case shaderDataType::mat3:		return GL_FLOAT;
-		case shaderDataType::mat4:		return GL_FLOAT;
-		case shaderDataType::int1:		return GL_FLOAT;
-		case shaderDataType::int2:		return GL_INT;
-		case shaderDataType::int3:		return GL_INT;
-		case shaderDataType::int4:		return GL_INT;
-		case shaderDataType::bool1:		return GL_BOOL;
-		}
-
-		HZ_CORE_ASSERT(false, "Cannot return OpengGL type!");
-		return 0;
-	}
 
 	Application::Application() 
 	{
@@ -47,51 +26,28 @@ namespace hazel
 		imGuiLayer = new ImGuiLayer;
 		pushOverlay(imGuiLayer);
 
-		glGenVertexArrays(1, &vertexArray);
-		glBindVertexArray(vertexArray);
-
 		float vertices[] = {
 			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,
 			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,
 			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,
 			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,
 		};
-
 		vertexBuffer.reset(VertexBuffer::create(vertices, sizeof(vertices)));
-		vertexBuffer->bind(); 
-		{
 
-			BufferLayout layout
-			(
-				{ { shaderDataType::float3, "aPosition" },
-				 { shaderDataType::float4, "aColor" } }
-			);
-
-			vertexBuffer->setLayout(layout);
-		}
-
-		{
-			uint32_t index = 0;
-			const BufferLayout& layout = vertexBuffer->getLayout();
-			for (const auto& element : layout) {
-				GLenum openGLDataType = shaderDataTypeToOpenGLBaseType(element.type);
-				uint32_t stride = layout.getStride();
-				uint16_t offset = element.offset;
-				bool normalized = element.normalized;
-				glVertexAttribPointer(index, element.getComponentCount(), openGLDataType, normalized, stride, (const void*)offset);
-				glEnableVertexAttribArray(index);
-				++index;
-			}
-		}
+		vertexBuffer->setLayout(
+		  { { shaderDataType::float3, "aPosition" },
+			{ shaderDataType::float4, "aColor"    } });
 
 		uint32_t indices[] =
 		{
 			0, 1, 2,
 			0, 2, 3
 		};
-
 		indexBuffer.reset(IndexBuffer::create(indices, sizeof(indices) / sizeof(indices[0])));
-		vertexBuffer->bind();
+		
+		vertexArray.reset(VertexArray::create());
+		vertexArray->addVertexBuffer(vertexBuffer);
+		vertexArray->setIndexBuffer(indexBuffer);
 
 		std::string shaderPath = std::filesystem::absolute("../Hazel/src/Platform/OpenGL/Shader/").string();
 		shader.reset(Shader::create(shaderPath + "shader.vert",
@@ -134,7 +90,7 @@ namespace hazel
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			shader->bind();
-			glBindVertexArray(vertexArray);
+			vertexArray->bind();
 			glDrawElements(GL_TRIANGLES, indexBuffer->getCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (auto& layer : layerStack)

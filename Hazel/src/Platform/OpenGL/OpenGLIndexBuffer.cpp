@@ -11,7 +11,7 @@ namespace hazel
 		: count(count)
 	{
 		glCreateBuffers(1, &rendererID);
-		bind();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), vertices, GL_STATIC_DRAW);
 	}
 

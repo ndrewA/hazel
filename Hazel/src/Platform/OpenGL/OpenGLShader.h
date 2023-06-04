@@ -8,7 +8,7 @@ namespace hazel
 	{
 	public:
 		OpenGLShader(const std::string& vertexPath, const std::string& fragmentPath);
-		virtual ~OpenGLShader();
+		~OpenGLShader() override;
 
 		void bind() const override;
 		void unbind() const override;

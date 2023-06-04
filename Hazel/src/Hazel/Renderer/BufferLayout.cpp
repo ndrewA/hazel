@@ -3,7 +3,7 @@
 
 namespace hazel
 {
-	BufferLayout::BufferLayout(const std::vector<BufferElement>& elements)
+	BufferLayout::BufferLayout(const std::initializer_list<BufferElement>& elements)
 		: elements(elements)
 	{
 		calculateOffsetAndStride();

@@ -34,7 +34,7 @@ namespace hazel
 
 			glGetProgramInfoLog(rendererID, infoLogLength, nullptr, infoLog.data());
 
-			HZ_ASSERT(false, "program failed: ", infoLog.data());
+			HZ_CORE_ASSERT(false, "program failed: ", infoLog.data());
 		}
 	}
 
@@ -56,7 +56,7 @@ namespace hazel
 	char* OpenGLShader::getShaderString(const std::string path) const
 	{
 		std::fstream file(path);
-		HZ_ASSERT(file.is_open(), "File is not open: " + path);
+		HZ_CORE_ASSERT(file.is_open(), "File is not open: " + path);
 
 		std::string shaderString(std::istreambuf_iterator<char>{file}, {});
 
@@ -88,7 +88,7 @@ namespace hazel
 			glGetShaderInfoLog(shader, infoLogLength, nullptr, infoLog.data());
 
 			HZ_ERROR("{0}", infoLog.data());
-			HZ_ASSERT(false, shaderType == GL_VERTEX_SHADER ? 
+			HZ_CORE_ASSERT(false, shaderType == GL_VERTEX_SHADER ? 
 								"Vertex shader compilation failed!" 
 								: "Fragment shader compilation failed!");
 		}

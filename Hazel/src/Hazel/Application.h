@@ -15,6 +15,7 @@
 
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/VertexBuffer.h"
+#include "Renderer/VertexArray.h"
 
 namespace hazel
 {
@@ -42,11 +43,10 @@ namespace hazel
 		bool running = true;
 		LayerStack layerStack;
 
-		unsigned int vertexArray;
-		std::unique_ptr<VertexBuffer> vertexBuffer;
-		std::unique_ptr<IndexBuffer> indexBuffer;
-
-		std::unique_ptr<Shader> shader;
+		std::shared_ptr<VertexArray> vertexArray;
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		std::shared_ptr<Shader> shader;
 	private:
 		static Application* instance;
 	};

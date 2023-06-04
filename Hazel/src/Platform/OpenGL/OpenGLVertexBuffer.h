@@ -8,7 +8,7 @@ namespace hazel
 	{
 	public:
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
-		virtual ~OpenGLVertexBuffer();
+		~OpenGLVertexBuffer() override;
 
 		void bind() const override;
 		void unbind() const override;

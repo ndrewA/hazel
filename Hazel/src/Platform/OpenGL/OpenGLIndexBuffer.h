@@ -8,7 +8,7 @@ namespace hazel
 	{
 	public:
 		OpenGLIndexBuffer(uint32_t* vertices, uint32_t count);
-		virtual ~OpenGLIndexBuffer();
+		~OpenGLIndexBuffer() override;
 
 		void bind() const override;
 		void unbind() const override;

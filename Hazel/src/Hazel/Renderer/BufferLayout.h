@@ -51,7 +51,7 @@ namespace hazel
 	class BufferLayout
 	{
 	public:
-		BufferLayout(const std::vector<BufferElement>& elements);
+		BufferLayout(const std::initializer_list<BufferElement>& elements);
 		BufferLayout() { }
 
 		void setElements(const std::vector<BufferElement>& bufferElements);
