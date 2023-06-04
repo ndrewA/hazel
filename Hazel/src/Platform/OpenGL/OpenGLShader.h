@@ -15,6 +15,7 @@ namespace hazel
 
 	private:
 		char* getShaderString(const std::string path) const;
+
 		unsigned int makeShader(const std::string shaderPath, const uint32_t shaderType) const;
 
 	private:

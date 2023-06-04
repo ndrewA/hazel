@@ -1,8 +1,7 @@
 #include "hzpch.h"
+#include "OpenGLVertexBuffer.h"
 
 #include <glad/glad.h>
-
-#include "OpenGLVertexBuffer.h"
 
 namespace hazel
 {
